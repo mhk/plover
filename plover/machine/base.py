@@ -9,8 +9,6 @@
 import binascii
 import threading
 
-import serial
-
 from plover import _, log
 from plover.machine.keymap import Keymap
 from plover.misc import boolean
@@ -81,7 +79,7 @@ class StenotypeBase:
 
     def add_state_callback(self, callback):
         self.state_subscribers.append(callback)
-        
+
     def remove_state_callback(self, callback):
         self.state_subscribers.remove(callback)
 
@@ -128,7 +126,7 @@ class StenotypeBase:
 
     def _ready(self):
         self._set_state(STATE_RUNNING)
-            
+
     def _error(self):
         self._set_state(STATE_ERROR)
 
@@ -149,7 +147,7 @@ class StenotypeBase:
 
 class ThreadedStenotypeBase(StenotypeBase, threading.Thread):
     """Base class for thread based machines.
-    
+
     Subclasses should override run.
     """
     def __init__(self):
@@ -230,6 +228,7 @@ class SerialStenotypeBase(ThreadedStenotypeBase):
         self._close_port()
 
         try:
+            import serial
             self.serial_port = serial.Serial(**self.serial_params)
         except (serial.SerialException, OSError):
             log.warning('Can\'t open serial port', exc_info=True)
