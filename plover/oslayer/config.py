@@ -6,7 +6,6 @@
 import os
 import sys
 
-import appdirs
 
 
 if sys.platform.startswith('darwin'):
@@ -36,6 +35,7 @@ CONFIG_BASENAME = 'plover.cfg'
 if os.path.isfile(os.path.join(PROGRAM_DIR, CONFIG_BASENAME)):
     CONFIG_DIR = PROGRAM_DIR
 else:
+    import appdirs
     config_directories = [
         getattr(appdirs, directory_type)('plover')
         for directory_type in ('user_config_dir', 'user_data_dir')
