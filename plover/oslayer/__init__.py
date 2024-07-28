@@ -11,10 +11,11 @@ from .config import PLATFORM
 
 
 PLATFORM_PACKAGE = {
-    'bsd'  : 'linux',
-    'linux': 'linux',
-    'mac'  : 'osx',
-    'win'  : 'windows',
+    'bsd'         : 'linux',
+    'linux'       : 'linux',
+    'mac'         : 'osx',
+    'win'         : 'windows',
+    'emscripten'  : 'emscripten',
 }
 
 def _add_platform_package_to_path():

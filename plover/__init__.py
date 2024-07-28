@@ -2,7 +2,10 @@
 # See LICENSE.txt for details.
 
 """Plover: Open Source Stenography Software"""
+import sys
 
+if sys.platform == 'emscripten' or 'emscripten' in sys.argv:
+    sys.platform = 'emscripten' # force platform (for testing)
 if __name__ == 'plover':
     from plover.i18n import Translator
     _ = Translator(__package__)

@@ -8,7 +8,9 @@ import sys
 
 
 
-if sys.platform.startswith('darwin'):
+if sys.platform.startswith('emscripten') or 'emscripten' in sys.argv:
+    PLATFORM = 'emscripten'
+elif sys.platform.startswith('darwin'):
     PLATFORM = 'mac'
 elif sys.platform.startswith('linux'):
     PLATFORM = 'linux'
