@@ -1,5 +1,5 @@
 # old
-from threading import Event
+# from threading import Event
 # from plover.oslayer.keyboardcontrol import KeyboardEmulation
 from plover.gui_emscripten.engine import Engine
 

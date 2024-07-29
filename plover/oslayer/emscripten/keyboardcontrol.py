@@ -34,39 +34,54 @@ class KeyboardEmulation:
 
 class KeyboardCapture(Capture):
     def __init__(self):
-        self.web = False
-        if self.web:
-            # not used
+        self.keys_pressed = set()
+        try:
             import js
             from pyodide.ffi import create_proxy
             js.createObject(create_proxy(self.pyKeyDown), "pyCallback_key_down")
             js.createObject(create_proxy(self.pyKeyUp)  , "pyCallback_key_up")
             self.start = self.web_start
             self.cancel = self.web_cancel
-            self.suppress_keyboard = self.web_suppress
-        else:
+            self.suppressd = self.web_suppress
+            self.run = self.web_run
+        except ImportError:
             import threading
-            self._thread = threading.Thread(name='KeyboardCapture', target=self._run)
             self._cancelled = False
-            self.start = self.thread_start
+            self.start = self.web_start
             self.cancel = self.thread_cancel
-            self.suppress_keyboard = self.thread_suppress
+            self.suppress = self.thread_suppress
+            self._thread = threading.Thread(name='KeyboardCapture', target=self.thread_run)
+            self.start = self.thread_start
+            self.run = self.thread_run
+
+    def _console(self, text):
+        try:
+            import js
+            js.console.log(text)
+        except ImportError:
+            pass
 
     def pyKeyDown(self, key):
-        print(f"pyKeyDown: {key}")
+        self.keys_pressed.add(key)
+        self._console(f"pyKeyDown '{key}' [{' '.join(self.keys_pressed)}]")
         self.key_down(key);
 
     def pyKeyUp(self, key):
-        print(f"pyKeyUp: {key}")
+        self.keys_pressed.remove(key)
+        self._console(f"pyKeyUp '{key}' [{' '.join(self.keys_pressed)}]")
         self.key_up(key);
 
     def web_start(self):
         pass
 
-    def cancel(self):
+    def web_run(self):
+        print('web_run')
         pass
 
-    def suppress(self, suppressed_keys=()):
+    def web_cancel(self):
+        pass
+
+    def web_suppress(self, suppressed_keys=()):
         pass
 
     def _handler(self, key_events):
@@ -82,14 +97,17 @@ class KeyboardCapture(Capture):
                 self.key_up(evt)
         return True
 
-    def _run(self):
+    def thread_run(self):
         finished = False
         while not (finished or self._cancelled):
-            key_events = input('--> ');
-            finished = not self._handler(key_events)
+            try:
+                key_events = input('--> ');
+                finished = not self._handler(key_events)
+            except EOFError:
+                finished = True
 
     def thread_start(self):
-        self._thread.start()
+        pass
 
     def thread_cancel(self):
         self._cancelled = True

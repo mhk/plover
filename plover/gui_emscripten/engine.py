@@ -161,7 +161,7 @@ class StenoEngine:
             js.createObject(create_proxy(self._get_suggestions), "pyCallback_get_suggestions")
         except ImportError:
             pass
-        return
+        return 0
         while True:
             print('Waiting for key press/release')
             func, args, kwargs = self._queue.get()
