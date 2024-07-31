@@ -37,7 +37,7 @@ def init_config_dir():
         open(CONFIG_FILE, 'wb').close()
 
 
-def main():
+def main(osexit=True):
     """Launch plover."""
     description = "Run the plover stenotype engine. This is a graphical application."
     parser = argparse.ArgumentParser(description=description)
@@ -164,7 +164,10 @@ def main():
             code = 0
         else:
             os.execv(args[0], args)
-    os._exit(code)
+    if(osexit):
+        os._exit(code)
+    else:
+        return code
 
 if __name__ == '__main__':
     main()
