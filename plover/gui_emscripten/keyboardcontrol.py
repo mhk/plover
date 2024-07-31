@@ -28,14 +28,3 @@ class KeyboardEmulation:
 
     def send_key_combination(self, combo):
         print(combo)
-
-class FakeController:
-
-    def send_command(self, command):
-        pass
-
-    def start(self, message_cb):
-        pass
-
-    def stop(self):
-        pass
