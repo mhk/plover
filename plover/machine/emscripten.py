@@ -29,6 +29,8 @@ class EmscriptenKeyboard(Keyboard):
 
     def _key_down(self, key):
         super()._key_down(key)
+        steno_keys = {self._bindings.get(k) for k in self._stroke_keys}
+        steno_keys -= {None}
         try:
             import js
             for key in steno_keys:
@@ -37,14 +39,15 @@ class EmscriptenKeyboard(Keyboard):
             pass
 
     def _key_up(self, key):
-        super()._key_up(key)
-        try:
-            import js
-            from plover.steno import Stroke
-            stroke = Stroke(steno_keys)
-            js.jsCallback_stroke(f"{stroke.rtfcre}")
-            for key in steno_keys:
-                js.jsCallback_off(key)
-        except ImportError:
-            pass
-        #self._stroke_keys.clear()
+        if super()._key_up(key):
+            steno_keys = {self._bindings.get(k) for k in self._stroke_keys}
+            steno_keys -= {None}
+            try:
+                import js
+                from plover.steno import Stroke
+                stroke = Stroke(steno_keys)
+                js.jsCallback_stroke(f"{stroke.rtfcre}")
+                for key in steno_keys:
+                    js.jsCallback_off(key)
+            except ImportError:
+                pass

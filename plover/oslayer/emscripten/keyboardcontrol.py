@@ -75,7 +75,6 @@ class KeyboardCapture(Capture):
         pass
 
     def web_run(self):
-        print('web_run')
         pass
 
     def web_cancel(self):
