@@ -9,7 +9,6 @@ import time
 from plover.dictionary.base import load_dictionary
 from plover.exception import DictionaryLoaderException
 from plover.resource import resource_timestamp
-from plover.oslayer.config import PLATFORM
 from plover import log
 
 
@@ -32,10 +31,7 @@ class DictionaryLoadingManager:
         if op is not None and not op.needs_reloading():
             return op
         log.info('%s dictionary: %s', 'loading' if op is None else 'reloading', filename)
-        if(PLATFORM == 'emscripten'):
-            op = DictionaryLoadingOperation(filename)
-        else:
-            op = ThreadedDictionaryLoadingOperation(filename)
+        op = ThreadedDictionaryLoadingOperation(filename)
         self.dictionaries[filename] = op
         return op
 

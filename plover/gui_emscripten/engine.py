@@ -6,7 +6,7 @@ import os
 import shutil
 
 from plover import log, system
-from plover.dictionary.loading_manager import DictionaryLoadingManager
+from plover.dictionary.loading_manager import DictionaryLoadingManager, DictionaryLoadingOperation
 from plover.exception import DictionaryLoaderException
 from plover.formatting import Formatter
 from plover.misc import shorten_path
@@ -24,6 +24,18 @@ StartingStrokeState = namedtuple('StartingStrokeState',
 
 
 MachineParams = namedtuple('MachineParams', 'type options keymap')
+
+
+class EmscritenDictionaryLoadingManager(DictionaryLoadingManager):
+
+    def start_loading(self, filename):
+        op = self.dictionaries.get(filename)
+        if op is not None and not op.needs_reloading():
+            return op
+        log.info('%s dictionary: %s', 'loading' if op is None else 'reloading', filename)
+        op = DictionaryLoadingOperation(filename)
+        self.dictionaries[filename] = op
+        return op
 
 
 class ErroredDictionary(StenoDictionary):
@@ -114,7 +126,7 @@ class StenoEngine:
         self._translator.add_listener(log.translation)
         self._translator.add_listener(self._formatter.format)
         self._dictionaries = self._translator.get_dictionary()
-        self._dictionaries_manager = DictionaryLoadingManager()
+        self._dictionaries_manager = EmscritenDictionaryLoadingManager()
         self._running_state = self._translator.get_state()
         self._translator.clear_state()
         self._keyboard_emulation = keyboard_emulation
