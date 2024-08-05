@@ -88,12 +88,16 @@ class KeyboardCapture(Capture):
             if evt.strip().lower() == 'quit' or evt.strip().lower() == 'exit':
                 return False
             if evt.startswith('+'):
-                self.key_down(evt[1:])
+                for e in evt[1:]:
+                    self.key_down(e)
             elif evt.startswith('-'):
-                self.key_up(evt[1:])
+                for e in evt[1:]:
+                    self.key_up(e)
             else:
-                self.key_down(evt)
-                self.key_up(evt)
+                for e in evt:
+                    self.key_down(e)
+                for e in evt:
+                    self.key_up(e)
         return True
 
     def thread_run(self):
