@@ -7,6 +7,7 @@
 from plover import _
 from plover.machine.keyboard import Keyboard
 from plover.oslayer.keyboardcontrol import KeyboardCapture
+from plover.steno import Stroke
 
 # i18n: Machine name.
 _._('Emscripten Keyboard')
@@ -29,22 +30,22 @@ class EmscriptenKeyboard(Keyboard):
 
     def _key_down(self, key):
         super()._key_down(key)
-        steno_keys = {self._bindings.get(k) for k in self._stroke_keys}
-        steno_keys -= {None}
         try:
             import js
-            for key in steno_keys:
-                js.jsCallback_on(key)
+            steno_keys = set()
+            for k in self._stroke_keys:
+                key = self._bindings.get(k)
+                if key and key not in steno_keys:
+                    js.jsCallback_on(key)
+                    steno_keys.add(key)
         except ImportError:
             pass
 
     def _key_up(self, key):
-        if super()._key_up(key):
-            steno_keys = {self._bindings.get(k) for k in self._stroke_keys}
-            steno_keys -= {None}
+        steno_keys = super()._key_up(key)
+        if None != steno_keys:
             try:
                 import js
-                from plover.steno import Stroke
                 stroke = Stroke(steno_keys)
                 js.jsCallback_stroke(f"{stroke.rtfcre}")
                 for key in steno_keys:
