@@ -17,6 +17,7 @@ def main(config, controller):
     if not engine.load_config():
         return 3
     engine.start()
+    # return engine
     try:
         import js
         from pyodide.ffi import create_proxy

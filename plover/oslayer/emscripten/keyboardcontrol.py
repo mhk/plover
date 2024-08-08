@@ -45,12 +45,10 @@ class KeyboardCapture(Capture):
             self.suppressd = self.web_suppress
             self.run = self.web_run
         except ImportError:
-            import threading
             self._cancelled = False
             self.start = self.web_start
             self.cancel = self.thread_cancel
             self.suppress = self.thread_suppress
-            self._thread = threading.Thread(name='KeyboardCapture', target=self.thread_run)
             self.start = self.thread_start
             self.run = self.thread_run
 

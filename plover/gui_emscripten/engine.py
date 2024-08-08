@@ -174,15 +174,6 @@ class StenoEngine:
         except ImportError:
             pass
         return 0
-        while True:
-            print('Waiting for key press/release')
-            func, args, kwargs = self._queue.get()
-            try:
-                # with self._lock:
-                if func(*args, **kwargs):
-                    break
-            except Exception:
-                log.error('engine %s failed', func.__name__[1:], exc_info=True)
 
     def _on_control_message(self, msg):
         if msg[0] == 'command':
